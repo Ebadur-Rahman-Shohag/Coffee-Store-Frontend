@@ -11,6 +11,7 @@ import ErrorPage from "./pages/ErrorPage/ErrorPage.jsx";
 const router = createBrowserRouter([
   {
     path: "/",
+    loader: () => fetch("http://localhost:8000/coffee").then((res) => res.json()),
     element: <App />,
   },
   {

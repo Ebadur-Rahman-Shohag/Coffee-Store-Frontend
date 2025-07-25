@@ -7,13 +7,14 @@ import Gallery from '../../components/Gallery/Gallery'
 import Contact from '../../components/Contact/Contact'
 import Footer from '../../components/Footer/Footer'
 
-function Home() {
+function Home({ coffeeData }) {
     return (
         <>
             <Header />
             <Banner />
             <Service />
-            <Products />
+            <Products coffeeData={coffeeData}
+            />
             <Gallery />
             <Contact />
             <Footer />
