@@ -26,4 +26,17 @@ const deleteBookmark = async (_id) => {
 
 }
 
-export { fetchBookmarks, addBookmark, deleteBookmark };
+const updateBookmark = async (_id, data) => {
+    const response = await fetch(`${baseUrl}bookmarks/${_id}`, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    });
+    const result = await response.json();
+    return result;
+
+}
+
+export { fetchBookmarks, addBookmark, deleteBookmark, updateBookmark };
