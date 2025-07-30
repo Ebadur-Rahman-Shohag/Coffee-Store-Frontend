@@ -6,12 +6,13 @@ import Loader from "../Loader/Loader";
 
 function Form() {
     const [bookmarks, setBookmarks] = useState([]);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchData = async () => {
             const bookmarkData = await fetchBookmarks();
             setBookmarks(bookmarkData);
+            setLoading(false);
         };
         fetchData();
     }, []);
@@ -31,7 +32,7 @@ function Form() {
     };
 
     return (
-        <section className="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
+        <section className="max-w-7xl min-h-screen mx-auto py-16 px-4 sm:px-6 lg:px-8">
             <motion.div
                 className="bg-white shadow-2xl rounded-2xl border border-gray-200 p-8 max-w-2xl mx-auto mb-16"
                 initial={{ opacity: 0, y: -50 }}
@@ -93,7 +94,10 @@ function Form() {
             {loading ? (
                 <Loader />
             ) : (
-                <BookmarkCard bookmarks={bookmarks} setBookmarks={setBookmarks} />
+                <BookmarkCard
+                    bookmarks={bookmarks}
+                    setBookmarks={setBookmarks}
+                />
             )}
         </section>
     );
