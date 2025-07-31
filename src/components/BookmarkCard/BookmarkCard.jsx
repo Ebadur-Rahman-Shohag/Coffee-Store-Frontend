@@ -4,24 +4,46 @@ import { motion } from "framer-motion";
 import { FaTrash } from "react-icons/fa";
 import { MdBookmarks } from "react-icons/md";
 import { FiEdit } from "react-icons/fi";
+import Swal from "sweetalert2";
 
-function BookmarkCard({ bookmarks, setBookmarks }) {
-    /*************  ✨ Windsurf Command ⭐  *************/
-    /**
-     * Handle the deletion of a bookmark.
-     * @param {string} id the id of the bookmark to be deleted
-     */
-    /*******  d167c7d0-19ae-4861-ac04-2276a083ad65  *******/
+function BookmarkCard({ bookmarks, setBookmarks, search }) {
+    // Filtered bookmarks (don't mutate props)
+    const filteredBookmarks = bookmarks.filter((bookmark) =>
+        bookmark.title.toLowerCase().includes(search.toLowerCase())
+    );
+
     const handleDelete = async (id) => {
-        await deleteBookmark(id);
-        const newBookmarks = bookmarks.filter((bookmark) => bookmark._id !== id);
-        setBookmarks(newBookmarks);
+        Swal.fire({
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete it!",
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                try {
+                    await deleteBookmark(id);
+                    setBookmarks((prev) =>
+                        prev.filter((bookmark) => bookmark._id !== id)
+                    );
+                    Swal.fire({
+                        title: "Deleted!",
+                        text: "Your file has been deleted.",
+                        icon: "success",
+                    });
+                } catch (error) {
+                    console.error("Failed to delete:", error);
+                    Swal.fire("Error", "Failed to delete the item.", "error");
+                }
+            }
+        });
     };
 
     const handleUpdate = (id) => {
-        // Handle update logic here
-        // const modalId = `my_modal_${id}`;
-        document.getElementById(`my_modal_${id}`).showModal();
+        const modal = document.getElementById(`my_modal_${id}`);
+        if (modal) modal.showModal();
     };
 
     const handleUpdateSubmit = async (e, id) => {
@@ -30,14 +52,22 @@ function BookmarkCard({ bookmarks, setBookmarks }) {
         const title = form.title.value;
         const url = form.url.value;
         const data = { title, url };
-        const updated = await updateBookmark(id, data);
-        setBookmarks(bookmarks.map((b) => (b._id === id ? updated : b)));
-        document.getElementById(`my_modal_${id}`).close();
+
+        try {
+            const updated = await updateBookmark(id, data);
+            setBookmarks((prev) =>
+                prev.map((b) => (b._id === id ? updated : b))
+            );
+            document.getElementById(`my_modal_${id}`).close();
+        } catch (error) {
+            console.error("Failed to update:", error);
+            Swal.fire("Error", "Failed to update the bookmark.", "error");
+        }
     };
 
     return (
-        <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {bookmarks.map((bookmark, index) => (
+        <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-10">
+            {filteredBookmarks.map((bookmark, index) => (
                 <motion.div
                     key={bookmark._id}
                     className="bg-white shadow-lg rounded-2xl overflow-hidden border border-gray-200 hover:shadow-2xl transition-shadow duration-300 ease-in-out"
@@ -74,7 +104,7 @@ function BookmarkCard({ bookmarks, setBookmarks }) {
                         </button>
                         <button
                             onClick={() => handleUpdate(bookmark._id)}
-                            className="text-gray-400 hover:text-red-500 transition-colors duration-300 ease-in-out"
+                            className="text-gray-400 hover:text-blue-500 transition-colors duration-300 ease-in-out"
                         >
                             <FiEdit size={20} />
                         </button>
@@ -85,7 +115,9 @@ function BookmarkCard({ bookmarks, setBookmarks }) {
                                 Edit Bookmark
                             </h1>
                             <form
-                                onSubmit={(e) => handleUpdateSubmit(e, bookmark._id)}
+                                onSubmit={(e) =>
+                                    handleUpdateSubmit(e, bookmark._id)
+                                }
                                 className="space-y-8"
                             >
                                 <div>
@@ -131,7 +163,6 @@ function BookmarkCard({ bookmarks, setBookmarks }) {
                             </form>
                             <div className="modal-action">
                                 <form method="dialog">
-                                    {/* if there is a button in form, it will close the modal */}
                                     <button className="btn">Close</button>
                                 </form>
                             </div>

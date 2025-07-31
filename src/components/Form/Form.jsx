@@ -7,6 +7,7 @@ import Loader from "../Loader/Loader";
 function Form() {
     const [bookmarks, setBookmarks] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [search, setSearch] = useState("");
 
     useEffect(() => {
         const fetchData = async () => {
@@ -32,14 +33,14 @@ function Form() {
     };
 
     return (
-        <section className="max-w-7xl min-h-screen mx-auto py-16 px-4 sm:px-6 lg:px-8">
+        <section className="min-h-screen bg-gradient-to-br from-indigo-100 via-white to-blue-100 py-16 px-4 sm:px-6 lg:px-8">
             <motion.div
                 className="bg-white shadow-2xl rounded-2xl border border-gray-200 p-8 max-w-2xl mx-auto mb-16"
                 initial={{ opacity: 0, y: -50 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7, ease: "easeOut" }}
             >
-                <h1 className="text-5xl text-center font-extrabold text-gray-900 mb-10">
+                <h1 className="text-5xl text-center font-extrabold text-indigo-700 mb-10 tracking-tight drop-shadow-lg">
                     Bookmark Manager
                 </h1>
                 <form onSubmit={handleSubmit} className="space-y-8">
@@ -56,7 +57,7 @@ function Form() {
                         <input
                             id="title"
                             name="title"
-                            className="w-full px-6 py-4 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300"
+                            className="w-full px-6 py-4 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300 bg-gray-50 text-lg"
                             type="text"
                             placeholder="e.g., Awesome Design Resources"
                             required
@@ -75,14 +76,14 @@ function Form() {
                         <input
                             id="url"
                             name="url"
-                            className="w-full px-6 py-4 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300"
+                            className="w-full px-6 py-4 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300 bg-gray-50 text-lg"
                             type="url"
                             placeholder="https://example.com"
                             required
                         />
                     </motion.div>
                     <motion.button
-                        className="w-full py-4 px-8 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-transform transform hover:scale-105"
+                        className="w-full py-4 px-8 bg-gradient-to-r from-indigo-500 via-blue-500 to-indigo-600 hover:from-indigo-600 hover:to-blue-700 text-white font-bold rounded-xl shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-transform transform hover:scale-105 text-xl"
                         type="submit"
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
@@ -90,14 +91,20 @@ function Form() {
                         Add Bookmark
                     </motion.button>
                 </form>
+                <div className="mt-8">
+                    <input
+                        type="text"
+                        placeholder="Search bookmarks..."
+                        value={search}
+                        onChange={e => setSearch(e.target.value)}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300 bg-gray-50 text-lg"
+                    />
+                </div>
             </motion.div>
             {loading ? (
                 <Loader />
             ) : (
-                <BookmarkCard
-                    bookmarks={bookmarks}
-                    setBookmarks={setBookmarks}
-                />
+                <BookmarkCard bookmarks={bookmarks} setBookmarks={setBookmarks} search={search} />
             )}
         </section>
     );
